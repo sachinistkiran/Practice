@@ -1,32 +1,38 @@
 package temo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CoinChange {
 
-    public static int countWaysToMakeChange(int[] coins, int sum) {
-        // Create a dp array to store the number of ways to make change for each value
-        int[] dp = new int[sum + 1];
+    public static List<List<Integer>> countWaysToMakeChange(int[] coins, int sum) {
+        List<List<List<Integer>>> dp = new ArrayList<>();
 
-        // There is exactly one way to make sum 0 (by using no coins)
-        dp[0] = 1;
-
-        // Loop over each coin
+        for (int i = 0; i <= sum; i++) {
+            dp.add(new ArrayList<>());
+        }
+        dp.get(0).add(new ArrayList<>());
         for (int coin : coins) {
-            // Update dp array for all sums greater than or equal to the coin value
             for (int i = coin; i <= sum; i++) {
-                dp[i] += dp[i - coin];
+                for (List<Integer> combination : dp.get(i - coin)) {
+                    List<Integer> newCombination = new ArrayList<>(combination);
+                    newCombination.add(coin);
+                    dp.get(i).add(newCombination);
+                }
             }
         }
-
-        // Return the number of ways to make the sum
-        return dp[sum];
+        return dp.get(sum);
     }
 
     public static void main(String[] args) {
         int[] coins = {1, 2, 3};
         int sum = 4;
+        List<List<Integer>> combinations = countWaysToMakeChange(coins, sum);
+        System.out.println("Number of ways to make the sum " + sum + " is: " + combinations.size());
 
-        int numberOfWays = countWaysToMakeChange(coins, sum);
-        System.out.println("Number of ways to make the sum " + sum + " is: " + numberOfWays);
+        System.out.println("Combinations are:");
+        for (List<Integer> combination : combinations) {
+            System.out.println(combination);
+        }
     }
 }
-
